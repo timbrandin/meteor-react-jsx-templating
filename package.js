@@ -2,9 +2,9 @@ Package.describe({
   name: 'timbrandin:sideburns',
   version: '0.3.0',
   // Brief, one-line summary of the package.
-  summary: 'React templates for Meteor',
+  summary: 'React & Angular2 templates for Meteor',
   // URL to the Git repository containing the source code for this package.
-  git: 'https://github.com/timbrandin/meteor-react-sideburns',
+  git: 'https://github.com/timbrandin/meteor-sideburns',
   // By default, Meteor will default to using README.md for documentation.
   // To avoid submitting documentation, set this field to null.
   documentation: 'README.md'
