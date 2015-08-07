@@ -1,5 +1,4 @@
 var typescript = Npm.require('typescript');
-var minify = Npm.require('html-minifier').minify;
 var _eval = Npm.require('eval');
 var cheerio = Npm.require('cheerio');
 
@@ -40,7 +39,7 @@ var handler = function (compileStep) {
 
   try {
     var output = typescript.transpile(ts, { module : typescript.ModuleKind.System });
-    var moduleName = compileStep.inputPath.replace(/\\/,'/').replace('.ts','');
+    var moduleName = compileStep.inputPath.replace(/\\/,'/').replace('.html.ts','');
     output = output.replace("System.register([",'System.register("'+moduleName+'",[');
 
     console.log('\n\n\n');
@@ -59,13 +58,14 @@ var handler = function (compileStep) {
       console.log((i+1) + '  ', line);
     });
 
-    // console.log('\n\n\n');
-    // console.log(compileStep.pathForSourceMap);
-    // console.log('===================== .ts -> .js');
-    // var lines = output.split(/\n/g);
-    // _.each(lines, function(line, i) {
-    //   console.log((i+1) + '  ', line);
-    // });
+    console.log('\n\n\n');
+    console.log(compileStep.inputPath.replace('.html.ts', '.js'));
+    console.log('===================== .ts -> .js');
+    var lines = output.split(/\n/g);
+    // var lines = result.code.split(/\n/g);
+    _.each(lines, function(line, i) {
+      console.log((i+1) + '  ', line);
+    });
   }
   catch(e) {
     if (e.loc) {
@@ -80,7 +80,7 @@ var handler = function (compileStep) {
       console.log('\n\n\n');
       console.log(compileStep.pathForSourceMap);
       console.log('===================== .html.ts -> .ts');
-      var lines = angular2Ts.split(/\n/g);
+      var lines = ts.split(/\n/g);
       _.each(lines, function(line, i) {
         console.log((i+1) + '  ', line);
       });
@@ -105,6 +105,5 @@ var handler = function (compileStep) {
 }
 
 Plugin.registerSourceHandler('html.ts', {
-  isTemplate: true,
-  archMatching: "web"
+  isTemplate: true
 }, handler);

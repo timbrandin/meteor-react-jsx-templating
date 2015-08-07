@@ -31,16 +31,14 @@ Package.registerBuildPlugin({
   name: 'html.ts',
   use: [
     'underscore@1.0.3',
-    'cosmos:browserify@0.4.0',
-    'html-tools@1.0.4'
+    'cosmos:browserify@0.4.0'
   ],
   sources: [
     'angular-events.js',
     'sideburns-ts.js'
   ],
   npmDependencies: {
-    'typescript' : '1.5.0-beta',
-    'html-minifier' : '0.6.9',
+    'typescript' : '1.5.3',
     'cheerio': '0.7.0',
     'eval': '0.1.0'
   }
@@ -54,8 +52,11 @@ Package.onUse(function (api) {
   // We need the Babel helpers for React as a run-time dependency of the generated code.
   api.use('babel-runtime@0.1.0', ['client', 'server'], {weak: true});
   api.use('react-meteor-data@0.1.0', ['client', 'server'], {weak: true});
+  api.use('shmck:angular2@2.0.2', ['client', 'server'], {weak: true});
 
-  api.use(['cosmos:browserify@0.4.0'], 'client');
+  api.use([
+    'cosmos:browserify@0.4.0'
+  ], 'client');
   api.imply([
     'cosmos:browserify@0.4.0'
   ]);
