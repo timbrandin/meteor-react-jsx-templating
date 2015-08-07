@@ -1,17 +1,17 @@
 Package.describe({
   name: 'timbrandin:sideburns',
-  version: '0.2.3',
+  version: '0.3.0',
   // Brief, one-line summary of the package.
-  summary: 'React templates for Meteor',
+  summary: 'React & Angular2 templates for Meteor',
   // URL to the Git repository containing the source code for this package.
-  git: 'https://github.com/timbrandin/meteor-react-sideburns',
+  git: 'https://github.com/timbrandin/meteor-sideburns',
   // By default, Meteor will default to using README.md for documentation.
   // To avoid submitting documentation, set this field to null.
   documentation: 'README.md'
 });
 
 Package.registerBuildPlugin({
-  name: 'transpileJSXHTML',
+  name: 'html.jsx',
   use: [
     'underscore@1.0.3',
     'babel-compiler@5.4.7',
@@ -19,9 +19,26 @@ Package.registerBuildPlugin({
   ],
   sources: [
     'react-events.js',
-    'sideburns.js'
+    'sideburns-jsx.js'
   ],
   npmDependencies: {
+    'cheerio': '0.7.0',
+    'eval': '0.1.0'
+  }
+});
+
+Package.registerBuildPlugin({
+  name: 'html.ts',
+  use: [
+    'underscore@1.0.3',
+    'cosmos:browserify@0.4.0'
+  ],
+  sources: [
+    'angular-events.js',
+    'sideburns-ts.js'
+  ],
+  npmDependencies: {
+    'typescript' : '1.5.3',
     'cheerio': '0.7.0',
     'eval': '0.1.0'
   }
@@ -32,10 +49,17 @@ Npm.depends({
 });
 
 Package.onUse(function (api) {
-  // We need the Babel helpers as a run-time dependency of the generated code.
-  api.imply('babel-runtime@0.1.0');
-  api.imply('react-meteor-data@0.1.0');
-  api.use(['cosmos:browserify@0.4.0'], 'client');
+  // We need the Babel helpers for React as a run-time dependency of the generated code.
+  api.use('babel-runtime@0.1.0', ['client', 'server'], {weak: true});
+  api.use('react-meteor-data@0.1.0', ['client', 'server'], {weak: true});
+  api.use('shmck:angular2@2.0.2', ['client', 'server'], {weak: true});
+
+  api.use([
+    'cosmos:browserify@0.4.0'
+  ], 'client');
+  api.imply([
+    'cosmos:browserify@0.4.0'
+  ]);
 
   api.addFiles([
     'classnames-server.js',

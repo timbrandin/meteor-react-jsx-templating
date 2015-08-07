@@ -1,5 +1,9 @@
 # Change Log
 
+### v0.2.4
+
+* Now including React ES6 JSX files instead of compiling to ES5 JS files.
+
 ### v0.2.3
 
 * Improved variable checking for helpers.
