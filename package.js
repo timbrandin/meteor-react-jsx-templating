@@ -11,7 +11,7 @@ Package.describe({
 });
 
 Package.registerBuildPlugin({
-  name: 'transpileJSXHTML',
+  name: 'html.jsx',
   use: [
     'underscore@1.0.3',
     'babel-compiler@5.4.7',
@@ -19,7 +19,22 @@ Package.registerBuildPlugin({
   ],
   sources: [
     'react-events.js',
-    'sideburns.js'
+    'sideburns-jsx.js'
+  ],
+  npmDependencies: {
+    'cheerio': '0.7.0',
+    'eval': '0.1.0'
+  }
+});
+
+Package.registerBuildPlugin({
+  name: 'html.ts',
+  use: [
+    'underscore@1.0.3'
+  ],
+  sources: [
+    'angular-events.js',
+    'sideburns-ts.js'
   ],
   npmDependencies: {
     'cheerio': '0.7.0',
@@ -33,9 +48,9 @@ Npm.depends({
 
 Package.onUse(function (api) {
   // We need the Babel helpers as a run-time dependency of the generated code.
-  api.imply('babel-runtime@0.1.0');
-  api.imply('react-meteor-data@0.1.0');
-  api.use(['cosmos:browserify@0.4.0'], 'client');
+  api.imply('babel-runtime@0.1.0', ['client', 'server'], {weak: true});
+  api.imply('react-meteor-data@0.1.0', ['client', 'server'] ,{weak: true});
+  api.use(['cosmos:browserify@0.4.0'], 'client', {weak: true});
 
   api.addFiles([
     'classnames-server.js',
