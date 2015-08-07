@@ -1,6 +1,6 @@
 Package.describe({
   name: 'timbrandin:sideburns',
-  version: '0.2.4',
+  version: '0.3.0',
   // Brief, one-line summary of the package.
   summary: 'React templates for Meteor',
   // URL to the Git repository containing the source code for this package.
