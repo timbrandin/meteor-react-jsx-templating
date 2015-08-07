@@ -58,14 +58,14 @@ var handler = function (compileStep) {
       console.log((i+1) + '  ', line);
     });
 
-    console.log('\n\n\n');
-    console.log(compileStep.inputPath.replace('.html.ts', '.js'));
-    console.log('===================== .ts -> .js');
-    var lines = output.split(/\n/g);
-    // var lines = result.code.split(/\n/g);
-    _.each(lines, function(line, i) {
-      console.log((i+1) + '  ', line);
-    });
+    // console.log('\n\n\n');
+    // console.log(compileStep.inputPath.replace('.html.ts', '.js'));
+    // console.log('===================== .ts -> .js');
+    // var lines = output.split(/\n/g);
+    // // var lines = result.code.split(/\n/g);
+    // _.each(lines, function(line, i) {
+    //   console.log((i+1) + '  ', line);
+    // });
   }
   catch(e) {
     if (e.loc) {
