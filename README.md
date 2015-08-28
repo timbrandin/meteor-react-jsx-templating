@@ -20,6 +20,76 @@ meteor add timbrandin:sideburns
 
 ## Getting started
 
+#### Ideas for version 0.3 (Using the new Meteor toolchain)
+
+##### Disassembled
+
+```jsx
+// page.jsx
+<template name="page">
+  <div class="home">
+    <ul>
+      {{#each item in items}}
+      <li class={{isSelected}}>{{item.name}}</li>
+      {{(/each}}
+    </ul>
+  </div>
+</template>
+
+Template.page.helpers({
+  isSelected(context) {
+    return this.state.selected == context._id ? return 'selected' : '';
+  }
+});
+
+Template.page.events({
+  'click li': function(context) {
+    this.setState({selected: context._id});
+  }
+});
+
+class Page extends React.Component {
+  getInitialState: function() {
+    return {selected: false};
+  }
+  render() {
+    return Template.page.template;
+  }
+});
+```
+
+##### Inline
+
+```jsx
+// page.jsx
+class Page extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {selected: false};
+  }
+  helpers: {
+    isSelected(context) {
+      return this.state.selected == context._id ? 'selected' : '';
+    }
+  }
+  events: {
+    'click li': function(context) {
+      this.setState({selected: context._id});
+    }
+  }
+  render() {
+    return (<div class="home">
+      <ul>
+        {{#each item in items}}
+        <li class={{isSelected}}>{{item.name}}</li>
+        {{(/each}}
+      </ul>
+    </div>);
+  }
+}
+```
+
+
 ### Simple component
 
 <table width="100%"><thead><tr><th width="50%">Sideburns (.html.jsx)</th><th width="50%">React comparison</th></tr></thead><tbody><tr><td valign="top"><pre lang="jsx"><code>

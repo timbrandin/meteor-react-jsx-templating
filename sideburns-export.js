@@ -14,12 +14,12 @@ Sideburns.classNames.prototype.toString = Sideburns.classNames.prototype.toHTML 
 };
 
 Sideburns.check = function(context, string) {
+  var string = string.trim();
   var tests = string.split('.');
   if (!context) {
     return false;
   }
-  var obj = context.data;
-  var str = 'this.data';
+  var obj = context;
   _.each(tests, function(test) {
     if (!obj) {
       return false;

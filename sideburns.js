@@ -81,7 +81,7 @@ var handler = function (compileStep) {
           // Remove duplicate listeners.
           $(select).removeAttr(eventName);
           // Append new listener.
-          $(select).attr(eventName, "{__component.events['" + key + "'].bind(__component, typeof context != 'undefined' ? context : (this.data ? this.data : this))}");
+          $(select).attr(eventName, "{eventHandler.bind(__component, '" + key + "', typeof context != 'undefined' ? context : (this.data ? this.data : this))}");
           markup = $.html();
         }
       }
@@ -92,51 +92,51 @@ var handler = function (compileStep) {
     /* START SPACEBARS */
 
     // Add return and key={index} inside {{#each}}.
-    markup = markup.replace(/({{#each\s+[^}]+}}[^<]*)(<\w+)/g, '$1let context=arguments[0];return ($2 key={index}');
+    markup = markup.replace(/({{#each\s+[^}]+}}[^<]*)(<\w+)/g, '$1return ($2 key={index}');
     // {{#each}} in
-    markup = markup.replace(/{{#each\s+([^\s]+)\s+in\s+([^}]+)\s*}}/g, "{(Sideburns.check(this, '$2')? this.data.$2 : []).map(function($1, index){");
+    markup = markup.replace(/{{#each\s+([^\s]+)\s+in\s+([^}]+)\s*}}/g, "{(Sideburns.check(context, '$2')? context.$2 : []).map(function($1, index){let context=__component.data;context.$1=$1");
     // {{/each}}
     markup = markup.replace(/{{\/each}}/g, ");})}");
 
     // ^{{#if}}
-    markup = markup.replace(/^\W*{{#if\s+(\w+)\s*}}/g, "<span>{Sideburns.check(this, '$1')?(");
+    markup = markup.replace(/^\W*{{#if\s+(\w+)\s*}}/g, "<span>{Sideburns.check(context, '$1')?(");
     // {{/if}}$
     markup = markup.replace(/{{\/if}}\W*$/g, "):''}</span>");
     // {{#if}}
-    markup = markup.replace(/{{#if\s+(\w+)\s*}}/g, "{Sideburns.check(this, '$1')?(");
+    markup = markup.replace(/{{#if\s+(\w+)\s*}}/g, "{Sideburns.check(context, '$1')?(");
     // {{else}} {{/if}}
     markup = markup.replace(/(?:{{else}}(?![\w\W]*{{else}}))([\w\W]*){{\/if}}/g, "):($1)}");
     // {{/if}}
     markup = markup.replace(/{{\/if}}/g, "):''}");
 
     // ^{{#unless}}
-    markup = markup.replace(/^\W*{{#unless\s+(\w+)\s*}}/g, "<span>{!Sideburns.check(this, '$1')?(");
+    markup = markup.replace(/^\W*{{#unless\s+(\w+)\s*}}/g, "<span>{!Sideburns.check(context, '$1')?(");
     // {{/unless}}$
     markup = markup.replace(/{{\/unless}}\W*$/g, "):''}</span>");
     // {{#unless}}
-    markup = markup.replace(/{{#unless\s+(\w+)\s*}}/g, "{!Sideburns.check(this, '$1')?(");
+    markup = markup.replace(/{{#unless\s+(\w+)\s*}}/g, "{!Sideburns.check(context, '$1')?(");
     // {{else}} {{/unless}}
     markup = markup.replace(/(?:{{else}}(?![\w\W]*{{else}}))([\w\W]*){{\/unless}}/g, "):($1)}");
     // {{/unless}}
     markup = markup.replace(/{{\/unless}}/g, "):''}");
 
     // {{helper}} raw HTML
-    markup = markup.replace(/{{{([^}]*)}}}/g, "{Sideburns.check(this, '$1')? this.data.$1 : ''}");
+    markup = markup.replace(/{{{([^}]*)}}}/g, "{Sideburns.check(context, '$1')? context.data.$1 : ''}");
 
     // {{helper}} SafeString – Dynamic Attribute (class)
-    markup = markup.replace(/\sclass={{([^}]*)}}/g, " className={Sideburns.check(this, '$1')? new Sideburns.classNames(this.data.$1) : ''}");
+    markup = markup.replace(/\sclass={{([^}]*)}}/g, " className={Sideburns.check(context, '$1')? new Sideburns.classNames(context.$1) : ''}");
 
     // {{helper}} SafeString – Dynamic Attribute (other)
-    markup = markup.replace(/={{([^}]*)}}/g, "={Sideburns.check(this, '$1')? new Sideburns.SafeString(this.data.$1) : ''}");
+    markup = markup.replace(/={{([^}]*)}}/g, "={Sideburns.check(context, '$1')? new Sideburns.SafeString(context.$1) : ''}");
 
     // {{helper}} SafeString – In Attribute Values (class)
-    markup = markup.replace(/\sclass="([^\"{]*){{([^}]*)}}([^\"{]*)\"/g, " className={Sideburns.check(this, '$2')? '$1' + new Sideburns.classNames(this.data.$2) + '$3' : ''}");
+    markup = markup.replace(/\sclass="([^\"{]*){{([^}]*)}}([^\"{]*)\"/g, " className={Sideburns.check(context, '$2')? '$1' + new Sideburns.classNames(context.$2) + '$3' : ''}");
 
     // {{helper}} SafeString – In Attribute Values (other)
-    markup = markup.replace(/="([^\"{]*){{([^}]*)}}([^\"{]*)\"/g, "={Sideburns.check(this, '$2')? '$1' + new Sideburns.classNames(this.data.$2) + '$3' : ''}");
+    markup = markup.replace(/="([^\"{]*){{([^}]*)}}([^\"{]*)\"/g, "={Sideburns.check(context, '$2')? '$1' + new Sideburns.classNames(context.$2) + '$3' : ''}");
 
     // {{helper}} SafeString
-    markup = markup.replace(/{{([^}]*)}}/g, "{Sideburns.check(this, '$1')? new Sideburns.SafeString(this.data.$1) : ''}");
+    markup = markup.replace(/{{([^}]*)}}/g, "{Sideburns.check(context, '$1')? new Sideburns.SafeString(context.$1) : ''}");
 
     /* END SPACEBARS */
 
@@ -169,6 +169,10 @@ var handler = function (compileStep) {
     jsx += "  },\n";
     jsx += "  render: function() {\n";
     jsx += "    let __component = this;";
+    jsx += "    let context = this.data;";
+    jsx += "    function eventHandler(key,context,event){";
+    jsx += "        __component.events[key].call(this,event,context);";
+    jsx += "    }";
     jsx += "    return (" + markup + ");";
     jsx += "  }\n";
     jsx += "};\n";
